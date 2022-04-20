@@ -1,5 +1,6 @@
 package com.chimericdream.sponj.block;
 
+import com.chimericdream.sponj.BlockUtils;
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import com.google.common.collect.Lists;
@@ -18,16 +19,21 @@ import net.minecraft.util.math.Direction;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Queue;
 
 public class SponjBlock extends Block {
     private final Identifier BLOCK_ID = new Identifier(ModInfo.MOD_ID, "sponj");
+    private List<Block> SPONJ_BLOCKS = new ArrayList<>();
 
     public SponjBlock() {
         super(FabricBlockSettings.copyOf(Blocks.SPONGE));
     }
 
     public void register() {
+        SPONJ_BLOCKS = new ArrayList<>(List.of(SponjMod.SPONJ, SponjMod.WET_SPONJ));
+
         Registry.register(Registry.BLOCK, BLOCK_ID, this);
         Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
     }
@@ -52,34 +58,45 @@ public class SponjBlock extends Block {
     }
 
     private boolean absorbWater(World world, BlockPos pos) {
+        List<BlockPos> sponjes = BlockUtils.getConnectedBlocksByType(world, pos, SPONJ_BLOCKS, 32);
+        int sponjCount = sponjes.size();
+
+        int absorptionRadius = 6 + (3 * (sponjCount - 1));
+        int maxAbsorption = 64 * sponjCount;
+
         Queue<Pair<BlockPos, Integer>> queue = Lists.newLinkedList();
-        queue.add(new Pair(pos, 0));
+        queue.add(new Pair<>(pos, 0));
+
         int i = 0;
 
         while(!queue.isEmpty()) {
-            Pair<BlockPos, Integer> pair = (Pair)queue.poll();
-            BlockPos blockPos = (BlockPos)pair.getLeft();
-            int j = (Integer)pair.getRight();
-            Direction[] var8 = Direction.values();
-            int var9 = var8.length;
+            Pair<BlockPos, Integer> pair = queue.poll();
+            BlockPos blockPos = pair.getLeft();
 
-            for(int var10 = 0; var10 < var9; ++var10) {
-                Direction direction = var8[var10];
+            int j = pair.getRight();
+
+            Direction[] directions = Direction.values();
+            int dirLength = directions.length;
+
+            for (int idx = 0; idx < dirLength; ++idx) {
+                Direction direction = directions[idx];
                 BlockPos blockPos2 = blockPos.offset(direction);
                 BlockState blockState = world.getBlockState(blockPos2);
                 FluidState fluidState = world.getFluidState(blockPos2);
                 Material material = blockState.getMaterial();
+
                 if (fluidState.isIn(FluidTags.WATER)) {
                     if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
                         ++i;
-                        if (j < 6) {
-                            queue.add(new Pair(blockPos2, j + 1));
+
+                        if (j < absorptionRadius) {
+                            queue.add(new Pair<>(blockPos2, j + 1));
                         }
                     } else if (blockState.getBlock() instanceof FluidBlock) {
                         world.setBlockState(blockPos2, Blocks.AIR.getDefaultState(), 3);
                         ++i;
-                        if (j < 6) {
-                            queue.add(new Pair(blockPos2, j + 1));
+                        if (j < absorptionRadius) {
+                            queue.add(new Pair<>(blockPos2, j + 1));
                         }
                     } else if (material == Material.UNDERWATER_PLANT || material == Material.REPLACEABLE_UNDERWATER_PLANT) {
                         BlockEntity blockEntity = blockState.hasBlockEntity() ? world.getBlockEntity(blockPos2) : null;
@@ -87,14 +104,23 @@ public class SponjBlock extends Block {
                         world.setBlockState(blockPos2, Blocks.AIR.getDefaultState(), 3);
                         ++i;
                         if (j < 6) {
-                            queue.add(new Pair(blockPos2, j + 1));
+                            queue.add(new Pair<>(blockPos2, j + 1));
                         }
                     }
                 }
             }
 
-            if (i > 64) {
+            if (i > maxAbsorption) {
                 break;
+            }
+        }
+
+        if (i > 0) {
+            for (BlockPos sponjPos : sponjes) {
+                if (world.getBlockState(sponjPos).getBlock().equals(SponjMod.SPONJ)) {
+                    world.setBlockState(sponjPos, SponjMod.WET_SPONJ.getDefaultState(), 2);
+                    world.syncWorldEvent(2001, sponjPos, Block.getRawIdFromState(Blocks.WATER.getDefaultState()));
+                }
             }
         }
 

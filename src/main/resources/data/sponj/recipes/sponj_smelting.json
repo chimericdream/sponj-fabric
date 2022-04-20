@@ -1,0 +1,9 @@
+{
+    "type": "minecraft:smelting",
+    "ingredient": {
+        "item": "sponj:wet_sponj"
+    },
+    "result": "sponj:sponj",
+    "experience": 0.15,
+    "cookingtime": 200
+}

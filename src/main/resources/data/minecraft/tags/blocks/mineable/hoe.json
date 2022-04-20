@@ -1,0 +1,9 @@
+{
+    "replace": false,
+    "values": [
+        "sponj:sponj",
+        "sponj:wet_sponj",
+        "sponj:lava_sponj",
+        "sponj:wet_lava_sponj"
+    ]
+}

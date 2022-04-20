@@ -1,0 +1,8 @@
+{
+    "type": "minecraft:crafting_shapeless",
+    "ingredients": [
+        {"item": "sponj:sponj"},
+        {"item": "minecraft:magma_cream"}
+    ],
+    "result": {"item": "sponj:lava_sponj"}
+}
