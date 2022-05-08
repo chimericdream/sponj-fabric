@@ -3,6 +3,7 @@ package com.chimericdream.sponj.block;
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
+import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.Block;
 import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
@@ -30,7 +31,10 @@ public class WetLavaSponjBlock extends Block {
 
     public void register() {
         Registry.register(Registry.BLOCK, BLOCK_ID, this);
-        Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
+        Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS).recipeRemainder(SponjMod.LAVA_SPONJ.asItem())));
+
+        // Wet lava sponjes can smelt 128 items!
+        FuelRegistry.INSTANCE.add(this, 25600);
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
