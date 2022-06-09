@@ -17,10 +17,9 @@ import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
+import net.minecraft.util.math.random.Random;
 import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
-
-import java.util.Random;
 
 public class WetLavaSponjBlock extends Block {
     private final Identifier BLOCK_ID = new Identifier(ModInfo.MOD_ID, "wet_lava_sponj");
@@ -38,7 +37,7 @@ public class WetLavaSponjBlock extends Block {
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
-        if (world.getDimension().hasEnderDragonFight()) {
+        if (!world.getDimension().bedWorks() && !world.getDimension().ultrawarm()) {
             world.setBlockState(pos, SponjMod.LAVA_SPONJ.getDefaultState(), 3);
             world.syncWorldEvent(2009, pos, 0);
             world.playSound((PlayerEntity) null, pos, SoundEvents.BLOCK_FIRE_EXTINGUISH, SoundCategory.BLOCKS, 1.0F, (1.0F + world.getRandom().nextFloat() * 0.2F) * 0.7F);
