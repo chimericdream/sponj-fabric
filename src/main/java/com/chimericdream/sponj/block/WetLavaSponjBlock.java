@@ -2,6 +2,7 @@ package com.chimericdream.sponj.block;
 
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.fabricmc.fabric.api.registry.FuelRegistry;
 import net.minecraft.block.Block;
@@ -9,16 +10,15 @@ import net.minecraft.block.BlockState;
 import net.minecraft.block.Blocks;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
 import net.minecraft.particle.ParticleTypes;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
 import net.minecraft.sound.SoundCategory;
 import net.minecraft.sound.SoundEvents;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
 import net.minecraft.util.math.random.Random;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 public class WetLavaSponjBlock extends Block {
@@ -29,8 +29,8 @@ public class WetLavaSponjBlock extends Block {
     }
 
     public void register() {
-        Registry.register(Registry.BLOCK, BLOCK_ID, this);
-        Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS).recipeRemainder(SponjMod.LAVA_SPONJ.asItem())));
+        Registry.register(Registries.BLOCK, BLOCK_ID, this);
+        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new FabricItemSettings().recipeRemainder(SponjMod.LAVA_SPONJ.asItem())));
 
         // Wet lava sponjes can smelt 128 items!
         FuelRegistry.INSTANCE.add(this, 25600);

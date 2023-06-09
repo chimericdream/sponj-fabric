@@ -5,6 +5,9 @@ import com.chimericdream.sponj.block.SponjBlock;
 import com.chimericdream.sponj.block.WetLavaSponjBlock;
 import com.chimericdream.sponj.block.WetSponjBlock;
 import net.fabricmc.api.ModInitializer;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,5 +35,15 @@ public class SponjMod implements ModInitializer {
 		LAVA_SPONJ.register();
 		WET_SPONJ.register();
 		WET_LAVA_SPONJ.register();
+
+		ItemGroupEvents.modifyEntriesEvent(ItemGroups.NATURAL).register(content -> {
+			content.addAfter(
+				Items.WET_SPONGE,
+				SPONJ,
+				WET_SPONJ,
+				LAVA_SPONJ,
+				WET_LAVA_SPONJ
+			);
+		});
 	}
 }

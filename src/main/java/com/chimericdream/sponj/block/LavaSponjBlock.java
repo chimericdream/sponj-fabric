@@ -4,18 +4,18 @@ import com.chimericdream.sponj.BlockUtils;
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import com.google.common.collect.Lists;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.tag.FluidTags;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -33,8 +33,8 @@ public class LavaSponjBlock extends Block {
     public void register() {
         LAVA_SPONJ_BLOCKS = new ArrayList<>(List.of(SponjMod.LAVA_SPONJ, SponjMod.WET_LAVA_SPONJ));
 
-        Registry.register(Registry.BLOCK, BLOCK_ID, this);
-        Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
+        Registry.register(Registries.BLOCK, BLOCK_ID, this);
+        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new FabricItemSettings()));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
@@ -73,16 +73,13 @@ public class LavaSponjBlock extends Block {
             int j = pair.getRight();
 
             Direction[] directions = Direction.values();
-            int dirLength = directions.length;
-
-            for (int idx = 0; idx < dirLength; ++idx) {
-                Direction direction = directions[idx];
+            for (Direction direction : directions) {
                 BlockPos blockPos2 = blockPos.offset(direction);
                 BlockState blockState = world.getBlockState(blockPos2);
                 FluidState fluidState = world.getFluidState(blockPos2);
 
                 if (fluidState.isIn(FluidTags.LAVA)) {
-                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
+                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
                         ++i;
                         if (j < absorptionRadius) {
                             queue.add(new Pair<>(blockPos2, j + 1));

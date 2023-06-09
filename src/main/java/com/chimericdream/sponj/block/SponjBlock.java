@@ -4,19 +4,23 @@ import com.chimericdream.sponj.BlockUtils;
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import com.google.common.collect.Lists;
+import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
+import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.Item;
-import net.minecraft.item.ItemGroup;
-import net.minecraft.tag.FluidTags;
+import net.minecraft.item.ItemGroups;
+import net.minecraft.item.Items;
+import net.minecraft.item.ToolMaterials;
+import net.minecraft.registry.Registries;
+import net.minecraft.registry.Registry;
+import net.minecraft.registry.tag.FluidTags;
 import net.minecraft.util.Identifier;
 import net.minecraft.util.Pair;
 import net.minecraft.util.math.BlockPos;
 import net.minecraft.util.math.Direction;
-import net.minecraft.util.registry.Registry;
 import net.minecraft.world.World;
 
 import java.util.ArrayList;
@@ -34,8 +38,8 @@ public class SponjBlock extends Block {
     public void register() {
         SPONJ_BLOCKS = new ArrayList<>(List.of(SponjMod.SPONJ, SponjMod.WET_SPONJ));
 
-        Registry.register(Registry.BLOCK, BLOCK_ID, this);
-        Registry.register(Registry.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().group(ItemGroup.BUILDING_BLOCKS)));
+        Registry.register(Registries.BLOCK, BLOCK_ID, this);
+        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new FabricItemSettings()));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
@@ -76,17 +80,14 @@ public class SponjBlock extends Block {
             int j = pair.getRight();
 
             Direction[] directions = Direction.values();
-            int dirLength = directions.length;
 
-            for (int idx = 0; idx < dirLength; ++idx) {
-                Direction direction = directions[idx];
+            for (Direction direction : directions) {
                 BlockPos blockPos2 = blockPos.offset(direction);
                 BlockState blockState = world.getBlockState(blockPos2);
                 FluidState fluidState = world.getFluidState(blockPos2);
-                Material material = blockState.getMaterial();
 
                 if (fluidState.isIn(FluidTags.WATER)) {
-                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable)blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
+                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
                         ++i;
 
                         if (j < absorptionRadius) {
@@ -98,7 +99,7 @@ public class SponjBlock extends Block {
                         if (j < absorptionRadius) {
                             queue.add(new Pair<>(blockPos2, j + 1));
                         }
-                    } else if (material == Material.UNDERWATER_PLANT || material == Material.REPLACEABLE_UNDERWATER_PLANT) {
+                    } else if (blockState.isReplaceable()) {
                         BlockEntity blockEntity = blockState.hasBlockEntity() ? world.getBlockEntity(blockPos2) : null;
                         dropStacks(blockState, world, blockPos2, blockEntity);
                         world.setBlockState(blockPos2, Blocks.AIR.getDefaultState(), 3);
