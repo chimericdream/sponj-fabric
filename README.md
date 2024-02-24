@@ -10,8 +10,9 @@ This simple mod adds two new blocks: a sponj and lava sponj.
 
 ### Versions
 
-* 1.19.0: supported
-* 1.18.2: supported
+* 1.20.x: supported
+* 1.19.x: maintenance only
+* 1.18.2: maintenance only
 * < 1.18.2: not planned
 
 ### Current Features
