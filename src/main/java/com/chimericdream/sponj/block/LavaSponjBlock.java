@@ -79,7 +79,7 @@ public class LavaSponjBlock extends Block {
                 FluidState fluidState = world.getFluidState(blockPos2);
 
                 if (fluidState.isIn(FluidTags.LAVA)) {
-                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
+                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(null, world, blockPos2, blockState).isEmpty()) {
                         ++i;
                         if (j < absorptionRadius) {
                             queue.add(new Pair<>(blockPos2, j + 1));

@@ -5,15 +5,11 @@ import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import com.google.common.collect.Lists;
 import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.itemgroup.v1.ItemGroupEvents;
 import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItem;
-import net.minecraft.item.ItemGroups;
-import net.minecraft.item.Items;
-import net.minecraft.item.ToolMaterials;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.FluidTags;
@@ -87,7 +83,7 @@ public class SponjBlock extends Block {
                 FluidState fluidState = world.getFluidState(blockPos2);
 
                 if (fluidState.isIn(FluidTags.WATER)) {
-                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(world, blockPos2, blockState).isEmpty()) {
+                    if (blockState.getBlock() instanceof FluidDrainable && !((FluidDrainable) blockState.getBlock()).tryDrainFluid(null, world, blockPos2, blockState).isEmpty()) {
                         ++i;
 
                         if (j < absorptionRadius) {
