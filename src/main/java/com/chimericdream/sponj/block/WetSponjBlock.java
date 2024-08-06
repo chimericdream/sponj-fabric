@@ -2,11 +2,10 @@ package com.chimericdream.sponj.block;
 
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.entity.player.PlayerEntity;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.particle.ParticleTypes;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
@@ -19,15 +18,15 @@ import net.minecraft.util.math.random.Random;
 import net.minecraft.world.World;
 
 public class WetSponjBlock extends Block {
-    private final Identifier BLOCK_ID = new Identifier(ModInfo.MOD_ID, "wet_sponj");
+    private final Identifier BLOCK_ID = Identifier.of(ModInfo.MOD_ID, "wet_sponj");
 
     public WetSponjBlock() {
-        super(FabricBlockSettings.copyOf(Blocks.SPONGE));
+        super(AbstractBlock.Settings.copy(Blocks.SPONGE));
     }
 
     public void register() {
         Registry.register(Registries.BLOCK, BLOCK_ID, this);
-        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new FabricItemSettings().recipeRemainder(SponjMod.SPONJ.asItem())));
+        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings().recipeRemainder(SponjMod.SPONJ.asItem())));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {

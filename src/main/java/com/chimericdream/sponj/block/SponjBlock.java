@@ -4,12 +4,11 @@ import com.chimericdream.sponj.BlockUtils;
 import com.chimericdream.sponj.ModInfo;
 import com.chimericdream.sponj.SponjMod;
 import com.google.common.collect.Lists;
-import net.fabricmc.fabric.api.item.v1.FabricItemSettings;
-import net.fabricmc.fabric.api.object.builder.v1.block.FabricBlockSettings;
 import net.minecraft.block.*;
 import net.minecraft.block.entity.BlockEntity;
 import net.minecraft.fluid.FluidState;
 import net.minecraft.item.BlockItem;
+import net.minecraft.item.Item;
 import net.minecraft.registry.Registries;
 import net.minecraft.registry.Registry;
 import net.minecraft.registry.tag.FluidTags;
@@ -24,18 +23,18 @@ import java.util.List;
 import java.util.Queue;
 
 public class SponjBlock extends Block {
-    private final Identifier BLOCK_ID = new Identifier(ModInfo.MOD_ID, "sponj");
+    private final Identifier BLOCK_ID = Identifier.of(ModInfo.MOD_ID, "sponj");
     private List<Block> SPONJ_BLOCKS = new ArrayList<>();
 
     public SponjBlock() {
-        super(FabricBlockSettings.copyOf(Blocks.SPONGE));
+        super(AbstractBlock.Settings.copy(Blocks.SPONGE));
     }
 
     public void register() {
         SPONJ_BLOCKS = new ArrayList<>(List.of(SponjMod.SPONJ, SponjMod.WET_SPONJ));
 
         Registry.register(Registries.BLOCK, BLOCK_ID, this);
-        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new FabricItemSettings()));
+        Registry.register(Registries.ITEM, BLOCK_ID, new BlockItem(this, new Item.Settings()));
     }
 
     public void onBlockAdded(BlockState state, World world, BlockPos pos, BlockState oldState, boolean notify) {
